@@ -22,10 +22,18 @@ const existeUsuarioPorId = async (id)=>{
         throw new Error (`El usuario ${id} no existe en la base de datos`)
     }
 } 
+//verificar si el usuario existe
+const existeCategoria = async (id)=>{
+    const existeUsuario =  await Usuario.findById(id)
+    if(!existeUsuario){
+        throw new Error (`El usuario ${id} no existe en la base de datos`)
+    }
+} 
 
 
 module.exports = {
     esRolValido,
     emailExiste,
-    existeUsuarioPorId
+    existeUsuarioPorId,
+    existeCategoria
 }
