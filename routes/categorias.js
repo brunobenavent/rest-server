@@ -7,8 +7,8 @@ const {
     actualizarCategoria,
     borrarCategoria
      } = require('../controllers/categorias');
-const { existeCategoria } = require('../helpers/db-validators');
-const { validarJWT, validarCampos } = require('../middlewares');
+const { existeCategoriaPorId } = require('../helpers/db-validators');
+const { validarJWT, validarCampos, esAdminRole } = require('../middlewares');
 
 
 const router = Router();
@@ -18,7 +18,9 @@ router.get('/', obtenerCategorias)
 
 // Obtener una categoría por id - público
 router.get('/:id', [
-    check('id').custom( existeCategoria )
+    check('id', 'No es un id de Mongo válido').isMongoId(),
+    check('id').custom( existeCategoriaPorId ),
+    validarCampos
 ], obtenerCategoria)
 
 
@@ -34,12 +36,20 @@ router.post('/', [
 
 // Actualizar una categoría por id - privado - cualquier persona con un token válido
 router.put('/:id', [
-    
+    validarJWT,
+    check('id', 'No es un id de Mongo válido').isMongoId(),
+    check('id').custom( existeCategoriaPorId ),
+    check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+    validarCampos
 ],actualizarCategoria)
 
 // Actualizar una categoría por id - privado - Admin
 router.delete('/:id', [
-    
+    validarJWT,
+    esAdminRole,
+    check('id', 'No es un id de Mongo válido').isMongoId(),
+    check('id').custom( existeCategoriaPorId ),
+    validarCampos
 ],borrarCategoria)
 
 
